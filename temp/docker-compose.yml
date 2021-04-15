@@ -1,0 +1,20 @@
+version: "3"
+
+services:
+  docker-registry:
+    restart: always
+    image: registry:2
+    ports:
+      - 5004:5000
+    environment:
+      - REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY=/data
+      - REGISTRY_AUTH=token
+      - REGISTRY_AUTH_TOKEN_REALM=https://192.168.219.102:5008/auth
+      - REGISTRY_AUTH_TOKEN_SERVICE=Authentication
+      - REGISTRY_AUTH_TOKEN_ISSUER=redii
+      - REGISTRY_AUTH_TOKEN_ROOTCERTBUNDLE=/mnt/local/certs/RootCA.crt
+      - REGISTRY_HTTP_TLS_CERTIFICATE=/mnt/local/certs/RootCA.crt
+      - REGISTRY_HTTP_TLS_KEY=/mnt/local/certs/RootCA.key
+    volumes:
+      - "${HOME}/mnt/auth/registry/data:/mnt/registry/data"
+      - "./certs:/mnt/local/certs"
