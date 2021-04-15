@@ -2,27 +2,28 @@ package main
 
 import (
 	"errors"
-	registry "github.com/adigunhammedolalekan/registry-auth"
 	"log"
 	"net/http"
-	"os"
 	"time"
+
+	registry "github.com/catchup/registry-auth"
 )
 
 func main() {
-	crt, key := "/mnt/certs/RootCA.crt", "/mnt/certs/RootCA.key"
+	crt, key := "certs/RootCA.crt", "certs/RootCA.key"
 	opt := &registry.Option{
-		Certfile:        "/mnt/certs/RootCA.crt",
-		Keyfile:         "/mnt/certs/RootCA.key",
+		Certfile:        "certs/RootCA.crt",
+		Keyfile:         "certs/RootCA.key",
 		TokenExpiration: time.Now().Add(24 * time.Hour).Unix(),
-		TokenIssuer:     "Authz",
+		TokenIssuer:     "sds",
 		Authenticator:   &httpAuthenticator{},
 	}
 	srv, err := registry.NewAuthServer(opt)
 	if err != nil {
 		log.Fatal(err)
 	}
-	addr := ":" + os.Getenv("PORT")
+	//	addr := ":" + os.Getenv("PORT")
+	addr := ":" + "5008"
 	http.Handle("/auth", srv)
 	log.Println("Server running at ", addr)
 	if err := http.ListenAndServeTLS(addr, crt, key, nil); err != nil {
@@ -34,7 +35,7 @@ type httpAuthenticator struct {
 }
 
 func (h *httpAuthenticator) Authenticate(username, password string) error {
-	if username != "adigun" {
+	if !(username == "redii" && password == "1") {
 		return errors.New("error")
 	}
 	return nil

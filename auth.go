@@ -5,11 +5,12 @@ import (
 	"crypto/x509"
 	"encoding/json"
 	"fmt"
-	"github.com/docker/distribution/registry/auth/token"
-	"github.com/docker/libtrust"
 	"math/rand"
 	"strings"
 	"time"
+
+	"github.com/docker/distribution/registry/auth/token"
+	"github.com/docker/libtrust"
 )
 
 // Token rep the JWT token that'll be created when authentication/authorizations succeeds
@@ -32,6 +33,7 @@ type Authenticator interface {
 type Authorizer interface {
 	Authorize(req *AuthorizationRequest) ([]string, error)
 }
+
 // TokenGenerator: an implementation should create a valid JWT according to the spec here
 // https://github.com/docker/distribution/blob/1b9ab303a477ded9bdd3fc97e9119fa8f9e58fca/docs/spec/auth/jwt.md
 // a default implementation that follows the spec is used when it is not provided
@@ -50,7 +52,7 @@ func (d *DefaultAuthenticator) Authenticate(username, password string) error {
 type DefaultAuthorizer struct{}
 
 func (d *DefaultAuthorizer) Authorize(req *AuthorizationRequest) ([]string, error) {
-	return []string{"pull", "push"}, nil
+	return []string{"pull"}, nil
 }
 
 type tokenGenerator struct {

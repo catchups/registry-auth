@@ -1,4 +1,4 @@
-module github.com/adigunhammedolalekan/registry-auth
+module github.com/catchup/registry-auth
 
 go 1.13
 

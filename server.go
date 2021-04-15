@@ -15,7 +15,7 @@ type AuthServer struct {
 	authorizer     Authorizer
 	authenticator  Authenticator
 	tokenGenerator TokenGenerator
-	crt, key string
+	crt, key       string
 }
 
 // NewAuthServer creates a new AuthServer
@@ -43,26 +43,37 @@ func NewAuthServer(opt *Option) (*AuthServer, error) {
 }
 
 func (srv *AuthServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println(r.Method)
+	fmt.Println(r.URL)
+
 	// grab user's auth parameters
 	username, password, ok := r.BasicAuth()
+	fmt.Println(username, password, ok)
 	if !ok {
+		fmt.Println("11111111111")
 		http.Error(w, "unauthorized", http.StatusUnauthorized)
 		return
 	}
 	if err := srv.authenticator.Authenticate(username, password); err != nil {
+		fmt.Println("222222222222")
 		http.Error(w, "unauthorized: invalid auth credentials", http.StatusUnauthorized)
 		return
 	}
 	req := srv.parseRequest(r)
 	actions, err := srv.authorizer.Authorize(req)
+	fmt.Println("333333333333333")
 	if err != nil {
+		fmt.Println("4444444444444")
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 	// create token for this user using the actions returned
 	// from the authorization check
 	tk, err := srv.tokenGenerator.Generate(req, actions)
+	fmt.Println(tk)
 	if err != nil {
+		fmt.Println("55555555555555555")
 		http.Error(w, "server error", http.StatusInternalServerError)
 		return
 	}
